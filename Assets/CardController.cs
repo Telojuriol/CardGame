@@ -18,6 +18,7 @@ public class CardController : MonoBehaviour
 
     public void HoldCard()
     {
+        Debug.Log("Hooold");
         isHeldByPlayer = true;
         transform.localScale = Vector3.one * 1.1f;
     }
