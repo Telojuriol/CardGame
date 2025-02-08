@@ -1,37 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CardController : MonoBehaviour
 {
+    public int cardNumber = 1;
 
-    private bool isHeldByPlayer = false;
+    public TextMeshProUGUI cardText;
+    public RectTransform cardRectTransform;
 
-    private Vector2 desiredDestination;
+    private bool Initialized = false;
 
-    public float speedToDesiredPosition = 10f;
-
-    private void Update()
+    private void Start()
     {
-        this.transform.position = Vector3.Lerp(this.transform.position, desiredDestination, Time.deltaTime * speedToDesiredPosition);
+        InitializeCard();
     }
 
-    public void HoldCard()
+    public void InitializeCard()
     {
-        Debug.Log("Hooold");
-        isHeldByPlayer = true;
-        transform.localScale = Vector3.one * 1.1f;
+        if (!Initialized)
+        {
+            cardText.text = cardNumber.ToString();
+            cardRectTransform = GetComponent<RectTransform>();
+            //Initialized = true;
+        }
     }
 
-    public void UnholdCard()
-    {
-        isHeldByPlayer = false;
-        //desiredDestination = Vector2.zero;
-        transform.localScale = Vector3.one;
-    }
-
-    public void UpdateDesiredPosition(Vector2 new_position)
-    {
-        desiredDestination = new_position;
-    }
 }

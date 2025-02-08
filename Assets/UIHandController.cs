@@ -11,6 +11,8 @@ public class UIHandController : MonoBehaviour
 
     public int minDistanceBetweenCards = 40;
 
+    public bool DrawFromDeckOnStart = true;
+
     public GameObject anchorPrefab;
 
     private List<Transform> anchorTransforms;
@@ -18,6 +20,26 @@ public class UIHandController : MonoBehaviour
     private RectTransform rect;
 
     private void Awake()
+    {
+        InitializeAnchors();
+    }
+
+    private void Start()
+    {
+        for(int i = 0; i < anchorTransforms.Count && GameplayManager.GetDeckController().GetRemainingCards() > 0; i++)
+        {
+            CardController newCard = GameplayManager.GetDeckController().DrawCardOnTop();
+            if (newCard)
+            {
+                newCard.InitializeCard();
+                newCard.transform.parent = anchorTransforms[i];
+                newCard.cardRectTransform.anchoredPosition = Vector2.zero;
+                newCard.cardRectTransform.localScale = Vector3.one;
+            }
+        }
+    }
+
+    private void InitializeAnchors()
     {
         anchorTransforms = new List<Transform>();
         rect = GetComponent<RectTransform>();
@@ -41,5 +63,10 @@ public class UIHandController : MonoBehaviour
             new_trans.anchoredPosition = new Vector3(startX + i * actualAnchorDistance, 0);
             anchorTransforms.Add(new_anchor.transform);
         }
+    }
+
+    public List<Transform> GetAnchorTransforms()
+    {
+        return anchorTransforms;
     }
 }
