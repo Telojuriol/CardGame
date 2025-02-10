@@ -4,6 +4,16 @@ using UnityEngine;
 
 public class GameplayManager : MonoBehaviour
 {
+    public enum EGamePhase
+    {
+        None,
+        DrawPhase,
+        PlayPhase,
+        CombatPhase,
+        ScorePhase,
+        EndPhase
+    }
+
     public int initialHandCrads = 5;
 
     public static GameplayManager _instance;
@@ -11,6 +21,8 @@ public class GameplayManager : MonoBehaviour
     public UIHandController handController;
     public DeckController deckController;
     public BoardController boardController;
+
+    public EGamePhase currentGamePhase;
 
     public Transform canvas;
 

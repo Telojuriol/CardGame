@@ -7,8 +7,6 @@ public class DeckController : MonoBehaviour
 
     public bool fillHandOnStart = true;
 
-    public UIHandController handController;
-
     public GameObject cardPrefab;
 
     public List<GameObject> deckCards;

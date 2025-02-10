@@ -12,6 +12,9 @@ public class CardController : MonoBehaviour
 
     private bool Initialized = false;
 
+    public UIHandController handOwner;
+    public bool isFaceDown = false;
+
     private void Start()
     {
         InitializeCard();
@@ -25,6 +28,11 @@ public class CardController : MonoBehaviour
             cardRectTransform = GetComponent<RectTransform>();
             //Initialized = true;
         }
+    }
+
+    public void TurnCard()
+    {
+
     }
 
 }

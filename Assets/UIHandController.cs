@@ -15,26 +15,33 @@ public class UIHandController : MonoBehaviour
 
     public GameObject anchorPrefab;
 
+    public DeckController myDeck;
+
     private List<Transform> anchorTransforms;
 
     private RectTransform rect;
 
+    public List<CardController> cardsInHand;
+
     private void Awake()
     {
         InitializeAnchors();
+
+        cardsInHand = new List<CardController>();
     }
 
     private void Start()
     {
-        for(int i = 0; i < anchorTransforms.Count && GameplayManager.GetDeckController().GetRemainingCards() > 0; i++)
+        for(int i = 0; i < anchorTransforms.Count && myDeck.GetRemainingCards() > 0; i++)
         {
-            CardController newCard = GameplayManager.GetDeckController().DrawCardOnTop();
+            CardController newCard = myDeck.DrawCardOnTop();
             if (newCard)
             {
                 newCard.InitializeCard();
                 newCard.transform.parent = anchorTransforms[i];
                 newCard.cardRectTransform.anchoredPosition = Vector2.zero;
                 newCard.cardRectTransform.localScale = Vector3.one;
+                cardsInHand.Add(newCard);
             }
         }
     }
@@ -68,5 +75,13 @@ public class UIHandController : MonoBehaviour
     public List<Transform> GetAnchorTransforms()
     {
         return anchorTransforms;
+    }
+
+    public void PlayCard(CardController cardToPlay, bool isRival = false)
+    {
+        cardToPlay.cardRectTransform.parent = GameplayManager.GetBoardController().GetCardSocket(!isRival);
+        cardToPlay.cardRectTransform.anchoredPosition = Vector2.zero;
+        GameplayManager.GetBoardController().CardPlayed(cardToPlay, !isRival);
+
     }
 }

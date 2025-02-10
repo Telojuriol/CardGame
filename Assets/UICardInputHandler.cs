@@ -9,7 +9,8 @@ public class UICardInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandl
     private Canvas canvas;
     private CanvasGroup canvasGroup;
     private Vector2 originalPosition; // Store initial position
-    public RectTransform boardArea;   // Assign this in the Inspector
+    private BoardController boardController;
+    private RectTransform boardArea;
 
     void Awake()
     {
@@ -19,6 +20,12 @@ public class UICardInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandl
 
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
+    }
+
+    void Start()
+    {
+        boardController = GameplayManager.GetBoardController();
+        boardArea = boardController.GetRectTransform();
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -60,7 +67,8 @@ public class UICardInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandl
 
     private void SnapToBoard()
     {
-        rectTransform.SetParent(boardArea, true); // Reparent to the board
+        rectTransform.SetParent(boardController.playableSockets[0].anchor, true); // Reparent to the board
         rectTransform.anchoredPosition = Vector2.zero; // Snap to center (adjust if needed)
     }
+
 }
