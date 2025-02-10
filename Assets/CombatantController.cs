@@ -19,17 +19,21 @@ public class CombatantController : MonoBehaviour
     public int currentScore = 0;
     public int currentCombo = 0;
 
-    private GameplayManager.PlayableSocket mySocket;
+    private PlayableSocket myBoardSocket;
 
     protected virtual void Start()
     {
-        mySocket = GameplayManager.GetBoardController().GetCardSocket(combatantType == ECombatantType.Player);
-        ownHand.DrawCards(this);
+        myBoardSocket = GameplayManager.GetBoardController().GetCardSocket(combatantType == ECombatantType.Player);
+        for(int i = 0; i < GameplayManager.GetInitialHandCards();i++)
+        {
+            ownHand.DrawCard(this);
+        }
+        //ownHand.DrawCards(this);
     }
 
     public void PlayCard(CardController cardToPlay)
     {
-        if(mySocket.IsSocketFree()) cardToPlay.CardPlayed(mySocket);
+        if(myBoardSocket.IsSocketFree()) cardToPlay.CardPlayed(myBoardSocket);
     }
 
     public bool CanPlayCard()

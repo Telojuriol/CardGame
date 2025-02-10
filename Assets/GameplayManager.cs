@@ -131,21 +131,21 @@ public class GameplayManager : MonoBehaviour
         return _instance.rivalController;
     }
 
-    [Serializable]
-    public class PlayableSocket
+}
+
+[Serializable]
+public class PlayableSocket
+{
+    public Transform anchor;
+    public CardController playedCard;
+
+    public PlayableSocket(Transform anchor)
     {
-        public Transform anchor;
-        [HideInInspector] public CardController playedCard;
-
-        public PlayableSocket(Transform anchor)
-        {
-            this.anchor = anchor;
-        }
-
-        public bool IsSocketFree()
-        {
-            return playedCard == null;
-        }
+        this.anchor = anchor;
     }
 
+    public bool IsSocketFree()
+    {
+        return playedCard == null;
+    }
 }

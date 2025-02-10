@@ -13,7 +13,7 @@ public class CardController : MonoBehaviour
     private bool Initialized = false;
 
     public HandController handOwner;
-    public GameplayManager.PlayableSocket currentSocket;
+    public PlayableSocket currentSocket;
     public bool isFaceDown = false;
 
     private UICardInputHandler cardInputHandler;
@@ -62,8 +62,9 @@ public class CardController : MonoBehaviour
 
     }
 
-    public void CardPlayed(GameplayManager.PlayableSocket socketToPlay)
+    public void CardPlayed(PlayableSocket socketToPlay)
     {
+        combatantOwner.ownHand.RemoveAnchorFromHand();
         SetCanBeMovedByInput(false);
         cardRectTransform.parent = socketToPlay.anchor;
         socketToPlay.playedCard = this;
@@ -74,6 +75,8 @@ public class CardController : MonoBehaviour
     {
         canvasGroup.alpha = 0.7f;
         canvasGroup.blocksRaycasts = false;
+        this.transform.parent = ModuleUI.GetCanvas().transform;
+        combatantOwner.ownHand.RemoveCardFromHand(this);
     }
 
     private void OnCardReleased()
@@ -87,7 +90,7 @@ public class CardController : MonoBehaviour
         }
         else
         {
-            cardRectTransform.anchoredPosition = Vector2.zero; // Return to hand
+            combatantOwner.ownHand.ReturnCardToHand(this);
         }
     }
 

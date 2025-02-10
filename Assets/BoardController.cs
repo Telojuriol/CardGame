@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour
 {
-    public List<GameplayManager.PlayableSocket> playableSockets;
+    public List<PlayableSocket> playableSockets;
 
     private RectTransform rectTransform;
 
@@ -39,7 +39,7 @@ public class BoardController : MonoBehaviour
         }      
     }
 
-    public GameplayManager.PlayableSocket GetCardSocket(bool isPlayer)
+    public PlayableSocket GetCardSocket(bool isPlayer)
     {
         if (isPlayer) return playableSockets[0];
         else return playableSockets[1];

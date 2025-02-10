@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class HandController : MonoBehaviour
 {
-
-    public int numberOfInitialCards = 3;
-
-    public int currentNumberOnCardsOnHand = 0;
+    public int currentNumberOfCardsOnHand = 0;
 
     public int horizontalMarginOffset = 40;
 
@@ -19,7 +16,7 @@ public class HandController : MonoBehaviour
 
     public DeckController myDeck;
 
-    private List<GameplayManager.PlayableSocket> anchorSockets;
+    public List<PlayableSocket> anchorSockets;
 
     private RectTransform rect;
 
@@ -27,28 +24,9 @@ public class HandController : MonoBehaviour
 
     private void Awake()
     {
-        InitializeAnchors();
-
+        //UpdateAnchors();
+        anchorSockets = new List<PlayableSocket> ();
         cardsInHand = new List<CardController>();
-    }
-
-    public void DrawCards(CombatantController combatantOwner)
-    {
-        for (int i = 0; i < anchorSockets.Count && myDeck.GetRemainingCards() > 0; i++)
-        {
-            CardController newCard = myDeck.DrawCardOnTop();
-            if (newCard)
-            {
-                newCard.InitializeCard();
-                newCard.transform.parent = anchorSockets[i].anchor;
-                newCard.cardRectTransform.anchoredPosition = Vector2.zero;
-                newCard.cardRectTransform.localScale = Vector3.one;
-                newCard.combatantOwner = combatantOwner;
-                newCard.SetCanBeMovedByInput(combatantOwner.combatantType == CombatantController.ECombatantType.Player);
-                newCard.currentSocket = anchorSockets[i];
-                cardsInHand.Add(newCard);
-            }
-        }
     }
 
     public void DrawCard(CombatantController combatantOwner)
@@ -57,47 +35,110 @@ public class HandController : MonoBehaviour
         if (newCard)
         {
             newCard.InitializeCard();
-            //newCard.transform.parent = anchorSockets[i].anchor;
-            newCard.cardRectTransform.anchoredPosition = Vector2.zero;
-            newCard.cardRectTransform.localScale = Vector3.one;
+            AddCardToHand(newCard);       
             newCard.combatantOwner = combatantOwner;
             newCard.SetCanBeMovedByInput(combatantOwner.combatantType == CombatantController.ECombatantType.Player);
-            //newCard.currentSocket = anchorSockets[i];
             cardsInHand.Add(newCard);
         }
     }
 
-    private void InitializeAnchors()
+    public void RemoveCardFromHand(CardController cardToRemove)
     {
-        anchorSockets = new List<GameplayManager.PlayableSocket>();
+        for(int i = 0; i < anchorSockets.Count; i++)
+        {
+            if (anchorSockets[i].playedCard == cardToRemove)
+            {
+                anchorSockets[i].playedCard = null;
+                break;
+            }
+        }
+        RemoveAnchorFromHand();
+    }
+
+    public void ReturnCardToHand(CardController cardToReturn)
+    {
+        AddCardToHand(cardToReturn);
+    }
+
+    public void RemoveAnchorFromHand()
+    {       
+        PlayableSocket socketToRemove = GetFirstFreeSocket();
+        if(socketToRemove != null)
+        {
+            currentNumberOfCardsOnHand--;
+            RemoveSocketFromList(socketToRemove);
+            GetAnchorTransforms();
+            UpdateAnchors();
+        }        
+    }
+
+    private void AddCardToHand(CardController cardToAdd)
+    {
+        currentNumberOfCardsOnHand++;
+        GameObject new_anchor = Instantiate(anchorPrefab, transform);
+        PlayableSocket newSocket = new PlayableSocket(new_anchor.transform);
+        anchorSockets.Add(newSocket);
+        
+        cardToAdd.transform.parent = newSocket.anchor;
+        cardToAdd.cardRectTransform.anchoredPosition = Vector2.zero;
+        cardToAdd.cardRectTransform.localScale = Vector3.one;
+        cardToAdd.currentSocket = newSocket;
+        newSocket.playedCard = cardToAdd;
+
+        UpdateAnchors();
+    }
+
+    public PlayableSocket GetFirstFreeSocket()
+    {
+        PlayableSocket socketToReturn = null;
+
+        for (int i = 0; i < anchorSockets.Count; i++)
+        {
+            if (anchorSockets[i].playedCard == null)
+            {
+                socketToReturn = anchorSockets[i];
+                break;
+            }
+        }
+
+        return socketToReturn;
+    }
+
+    private void RemoveSocketFromList(PlayableSocket socketToRemove)
+    {
+        Destroy(socketToRemove.anchor.gameObject);
+        anchorSockets.Remove(socketToRemove);
+    }
+
+    private void UpdateAnchors()
+    {
         rect = GetComponent<RectTransform>();
 
         float handAnchorWidth = rect.rect.width - horizontalMarginOffset;
 
         // Determine the actual spacing between cards
-        float actualAnchorDistance = Mathf.Min(handAnchorWidth / (numberOfInitialCards - 1), minDistanceBetweenCards);
+        float actualAnchorDistance = Mathf.Min(handAnchorWidth / (currentNumberOfCardsOnHand - 1), minDistanceBetweenCards);
 
         // Calculate total width occupied by the cards
-        float totalCardWidth = actualAnchorDistance * (numberOfInitialCards - 1);
+        float totalCardWidth = actualAnchorDistance * (currentNumberOfCardsOnHand - 1);
 
         // Center the anchors based on their total width
         float startX = -totalCardWidth / 2;
 
-        for (int i = 0; i < numberOfInitialCards; i++)
+        for (int i = 0; i < anchorSockets.Count; i++)
         {
-            GameObject new_anchor = Instantiate(anchorPrefab, transform);
-            RectTransform new_trans = new_anchor.GetComponent<RectTransform>();
+            RectTransform new_trans = anchorSockets[i].anchor.GetComponent<RectTransform>();
 
             new_trans.anchoredPosition = new Vector3(startX + i * actualAnchorDistance, 0);
-
-            GameplayManager.PlayableSocket newSocket = new GameplayManager.PlayableSocket(new_anchor.transform);
-            anchorSockets.Add(newSocket);
+            anchorSockets[i].playedCard.cardRectTransform.anchoredPosition = Vector2.zero;
         }
     }
 
-    public List<GameplayManager.PlayableSocket> GetAnchorTransforms()
+    public List<PlayableSocket> GetAnchorTransforms()
     {
         return anchorSockets;
     }
 
 }
+
+
