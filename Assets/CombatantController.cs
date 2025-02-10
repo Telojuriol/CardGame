@@ -17,6 +17,7 @@ public class CombatantController : MonoBehaviour
     public DeckController ownDeck;
 
     public int currentScore = 0;
+    public int currentCombo = 0;
 
     private GameplayManager.PlayableSocket mySocket;
 
@@ -34,5 +35,18 @@ public class CombatantController : MonoBehaviour
     public bool CanPlayCard()
     {
         return GameplayManager.GetBoardController().CombatantCanPlayCard(combatantType == ECombatantType.Player);
+    }
+
+    public void HandWin()
+    {
+        currentScore += (int)Mathf.Pow(2,currentCombo);
+        currentCombo++;
+        ModuleUI.UpdateScores();
+    }
+
+    public void HandLost()
+    {
+        currentCombo = 0;
+        ModuleUI.UpdateScores();
     }
 }

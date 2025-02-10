@@ -23,7 +23,8 @@ public class RivalController : CombatantController
                 if (ownHand.cardsInHand[i].cardNumber == cardNumber)
                 {
                     cardToPlay = ownHand.cardsInHand[i];
-                    PlayCard(cardToPlay);
+                    HandWin();
+                    //PlayCard(cardToPlay);
                     break;
                 }
             }

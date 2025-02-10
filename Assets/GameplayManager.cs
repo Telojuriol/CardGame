@@ -25,7 +25,8 @@ public class GameplayManager : MonoBehaviour
 
     public EGamePhase currentGamePhase;
 
-    public Transform canvas;
+    public PlayerController playerController;
+    public RivalController rivalController;
 
     private void Awake()
     {
@@ -52,9 +53,14 @@ public class GameplayManager : MonoBehaviour
         return _instance.boardController;
     }
 
-    public static Transform GetCanvas()
+    public static PlayerController GetPlayerController()
     {
-        return _instance.canvas;
+        return _instance.playerController;
+    }
+
+    public static RivalController GetRivalController()
+    {
+        return _instance.rivalController;
     }
 
     [Serializable]
