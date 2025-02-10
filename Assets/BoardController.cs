@@ -29,6 +29,16 @@ public class BoardController : MonoBehaviour
         return allCardsPlayed;
     }
 
+    public void ClearBoard()
+    {
+        for(int i = 0; i < playableSockets.Count; i++)
+        {
+            CardController cardToRemove = playableSockets[i].playedCard;
+            Destroy(cardToRemove.gameObject);
+            playableSockets[i].playedCard = null;
+        }      
+    }
+
     public GameplayManager.PlayableSocket GetCardSocket(bool isPlayer)
     {
         if (isPlayer) return playableSockets[0];

@@ -33,6 +33,74 @@ public class GameplayManager : MonoBehaviour
         _instance = this;
     }
 
+    private void Start()
+    {
+        StartCoroutine(TurnLoop());
+    }
+
+    IEnumerator TurnLoop()
+    {
+        while (true)
+        {
+            yield return new WaitUntil(() => AllCardsPlayed());
+            currentGamePhase = EGamePhase.CombatPhase;
+            Debug.Log("All cards played!");
+            yield return new WaitForSeconds(1f);
+            DetermineRoundWinner();
+            yield return new WaitForSeconds(2f);
+            RemoveCardsFromBoard();
+        }    
+    }
+
+    private bool AllCardsPlayed()
+    {
+        return boardController.AllCardsPlayed();
+    }
+
+    private void DetermineRoundWinner()
+    {
+        CardController playerCard = GetPlayedCard(true);
+        CardController rivalCard = GetPlayedCard(false);
+        if (playerCard.cardNumber > rivalCard.cardNumber)
+        {
+            playerController.RoundWin();
+            rivalController.RoundLost();
+        }
+        else if (playerCard.cardNumber == rivalCard.cardNumber)
+        {
+            playerController.RoundTied();
+            rivalController.RoundTied();
+        }
+        else
+        {
+            playerController.RoundLost();
+            rivalController.RoundWin();
+        }
+    }
+
+    private void RemoveCardsFromBoard()
+    {
+        boardController.ClearBoard();
+    }
+
+    private CardController GetPlayedCard(bool playerCard)
+    {
+        CombatantController.ECombatantType combatatntToGet = playerCard ? CombatantController.ECombatantType.Player : CombatantController.ECombatantType.Rival;
+        if (boardController.playableSockets[0].playedCard.combatantOwner.combatantType == combatatntToGet)
+        {
+            return boardController.playableSockets[0].playedCard;
+        }
+        else
+        {
+            return boardController.playableSockets[1].playedCard;
+        }
+    }
+
+    private bool NoCardsOnHands()
+    {
+        return false;
+    }
+
     public static int GetInitialHandCards()
     {
         return _instance.initialHandCrads;

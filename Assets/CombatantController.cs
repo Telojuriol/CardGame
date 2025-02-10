@@ -37,14 +37,21 @@ public class CombatantController : MonoBehaviour
         return GameplayManager.GetBoardController().CombatantCanPlayCard(combatantType == ECombatantType.Player);
     }
 
-    public void HandWin()
+    public void RoundWin()
     {
         currentScore += (int)Mathf.Pow(2,currentCombo);
         currentCombo++;
         ModuleUI.UpdateScores();
     }
 
-    public void HandLost()
+    public void RoundTied()
+    {
+        currentCombo = 0;
+        currentScore += (int)Mathf.Pow(2, currentCombo);
+        ModuleUI.UpdateScores();
+    }
+
+    public void RoundLost()
     {
         currentCombo = 0;
         ModuleUI.UpdateScores();

@@ -7,6 +7,8 @@ public class HandController : MonoBehaviour
 
     public int numberOfInitialCards = 3;
 
+    public int currentNumberOnCardsOnHand = 0;
+
     public int horizontalMarginOffset = 40;
 
     public int minDistanceBetweenCards = 40;
@@ -46,6 +48,22 @@ public class HandController : MonoBehaviour
                 newCard.currentSocket = anchorSockets[i];
                 cardsInHand.Add(newCard);
             }
+        }
+    }
+
+    public void DrawCard(CombatantController combatantOwner)
+    {
+        CardController newCard = myDeck.DrawCardOnTop();
+        if (newCard)
+        {
+            newCard.InitializeCard();
+            //newCard.transform.parent = anchorSockets[i].anchor;
+            newCard.cardRectTransform.anchoredPosition = Vector2.zero;
+            newCard.cardRectTransform.localScale = Vector3.one;
+            newCard.combatantOwner = combatantOwner;
+            newCard.SetCanBeMovedByInput(combatantOwner.combatantType == CombatantController.ECombatantType.Player);
+            //newCard.currentSocket = anchorSockets[i];
+            cardsInHand.Add(newCard);
         }
     }
 
