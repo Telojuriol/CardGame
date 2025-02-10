@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RivalController : MonoBehaviour
+public class RivalController : CombatantController
 {
 
     public bool playCard = false;
     public int cardNumber = 1;
 
-    public UIHandController hand;
-
-    void Start()
+    private new void Start()
     {
-        
+        base.Start();
     }
 
     void Update()
@@ -20,11 +18,11 @@ public class RivalController : MonoBehaviour
         if (playCard)
         {
             CardController cardToPlay = null;
-            for (int i = 0; i < hand.cardsInHand.Count; i++)
+            for (int i = 0; i < ownHand.cardsInHand.Count; i++)
             {
-                if (hand.cardsInHand[i].cardNumber == cardNumber)
+                if (ownHand.cardsInHand[i].cardNumber == cardNumber)
                 {
-                    cardToPlay = hand.cardsInHand[i];
+                    cardToPlay = ownHand.cardsInHand[i];
                     PlayCard(cardToPlay);
                     break;
                 }
@@ -33,8 +31,5 @@ public class RivalController : MonoBehaviour
         }
     }
 
-    public void PlayCard(CardController cardToPlay)
-    {
-        hand.PlayCard(cardToPlay, true);
-    }
+    
 }

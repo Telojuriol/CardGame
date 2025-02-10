@@ -12,12 +12,39 @@ public class CardController : MonoBehaviour
 
     private bool Initialized = false;
 
-    public UIHandController handOwner;
+    public HandController handOwner;
+    public GameplayManager.PlayableSocket currentSocket;
     public bool isFaceDown = false;
+
+    private UICardInputHandler cardInputHandler;
+
+    private CanvasGroup canvasGroup;
+
+    public CombatantController combatantOwner;
+
+    private void Awake()
+    {
+        canvasGroup = GetComponent<CanvasGroup>();
+        cardInputHandler = GetComponent<UICardInputHandler>();
+    }
 
     private void Start()
     {
         InitializeCard();
+    }
+
+    private void OnEnable()
+    {
+        cardInputHandler.onCardDragged += OnCardDragged;
+        cardInputHandler.onCardPressed += OnCardPressed;
+        cardInputHandler.onCardReleased += OnCardReleased;
+    }
+
+    private void OnDisable()
+    {
+        cardInputHandler.onCardDragged -= OnCardDragged;
+        cardInputHandler.onCardPressed -= OnCardPressed;
+        cardInputHandler.onCardReleased -= OnCardReleased;
     }
 
     public void InitializeCard()
@@ -33,6 +60,47 @@ public class CardController : MonoBehaviour
     public void TurnCard()
     {
 
+    }
+
+    public void CardPlayed(GameplayManager.PlayableSocket socketToPlay)
+    {
+        cardRectTransform.parent = socketToPlay.anchor;
+        socketToPlay.playedCard = this;
+        cardRectTransform.anchoredPosition = Vector2.zero;      
+    }
+
+    private void OnCardPressed()
+    {
+        canvasGroup.alpha = 0.7f;
+        canvasGroup.blocksRaycasts = false;
+    }
+
+    private void OnCardReleased()
+    {
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+
+        if (IsOverBoard() && combatantOwner.CanPlayCard())
+        {
+            combatantOwner.PlayCard(this);
+        }
+        else
+        {
+            cardRectTransform.anchoredPosition = Vector2.zero; // Return to hand
+        }
+    }
+
+    private void OnCardDragged(Vector2 deltaMovement)
+    {
+        cardRectTransform.anchoredPosition += deltaMovement;
+    }
+
+    private bool IsOverBoard()
+    {
+        RectTransform boardRectTransform = GameplayManager.GetBoardController().GetRectTransform();
+        if (boardRectTransform == null) return false;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(boardRectTransform, Input.mousePosition, ModuleUI.GetCanvas().worldCamera);
     }
 
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIHandController : MonoBehaviour
+public class HandController : MonoBehaviour
 {
 
     public int numberOfInitialCards = 3;
@@ -17,7 +17,7 @@ public class UIHandController : MonoBehaviour
 
     public DeckController myDeck;
 
-    private List<Transform> anchorTransforms;
+    private List<GameplayManager.PlayableSocket> anchorSockets;
 
     private RectTransform rect;
 
@@ -30,17 +30,19 @@ public class UIHandController : MonoBehaviour
         cardsInHand = new List<CardController>();
     }
 
-    private void Start()
+    public void DrawCards(CombatantController combatantOwner)
     {
-        for(int i = 0; i < anchorTransforms.Count && myDeck.GetRemainingCards() > 0; i++)
+        for (int i = 0; i < anchorSockets.Count && myDeck.GetRemainingCards() > 0; i++)
         {
             CardController newCard = myDeck.DrawCardOnTop();
             if (newCard)
             {
                 newCard.InitializeCard();
-                newCard.transform.parent = anchorTransforms[i];
+                newCard.transform.parent = anchorSockets[i].anchor;
                 newCard.cardRectTransform.anchoredPosition = Vector2.zero;
                 newCard.cardRectTransform.localScale = Vector3.one;
+                newCard.combatantOwner = combatantOwner;
+                newCard.currentSocket = anchorSockets[i];
                 cardsInHand.Add(newCard);
             }
         }
@@ -48,7 +50,7 @@ public class UIHandController : MonoBehaviour
 
     private void InitializeAnchors()
     {
-        anchorTransforms = new List<Transform>();
+        anchorSockets = new List<GameplayManager.PlayableSocket>();
         rect = GetComponent<RectTransform>();
 
         float handAnchorWidth = rect.rect.width - horizontalMarginOffset;
@@ -68,20 +70,15 @@ public class UIHandController : MonoBehaviour
             RectTransform new_trans = new_anchor.GetComponent<RectTransform>();
 
             new_trans.anchoredPosition = new Vector3(startX + i * actualAnchorDistance, 0);
-            anchorTransforms.Add(new_anchor.transform);
+
+            GameplayManager.PlayableSocket newSocket = new GameplayManager.PlayableSocket(new_anchor.transform);
+            anchorSockets.Add(newSocket);
         }
     }
 
-    public List<Transform> GetAnchorTransforms()
+    public List<GameplayManager.PlayableSocket> GetAnchorTransforms()
     {
-        return anchorTransforms;
+        return anchorSockets;
     }
 
-    public void PlayCard(CardController cardToPlay, bool isRival = false)
-    {
-        cardToPlay.cardRectTransform.parent = GameplayManager.GetBoardController().GetCardSocket(!isRival);
-        cardToPlay.cardRectTransform.anchoredPosition = Vector2.zero;
-        GameplayManager.GetBoardController().CardPlayed(cardToPlay, !isRival);
-
-    }
 }

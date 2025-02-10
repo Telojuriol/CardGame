@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class GameplayManager : MonoBehaviour
 
     public static GameplayManager _instance;
 
-    public UIHandController handController;
+    public HandController handController;
     public DeckController deckController;
     public BoardController boardController;
 
@@ -36,7 +37,7 @@ public class GameplayManager : MonoBehaviour
         return _instance.initialHandCrads;
     }
 
-    public static UIHandController GetHandController()
+    public static HandController GetHandController()
     {
         return _instance.handController;
     }
@@ -54,6 +55,23 @@ public class GameplayManager : MonoBehaviour
     public static Transform GetCanvas()
     {
         return _instance.canvas;
+    }
+
+    [Serializable]
+    public class PlayableSocket
+    {
+        public Transform anchor;
+        [HideInInspector] public CardController playedCard;
+
+        public PlayableSocket(Transform anchor)
+        {
+            this.anchor = anchor;
+        }
+
+        public bool IsSocketFree()
+        {
+            return playedCard == null;
+        }
     }
 
 }

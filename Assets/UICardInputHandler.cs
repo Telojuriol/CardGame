@@ -2,73 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static InputManager;
+using static UICardInputHandler;
 
 public class UICardInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
-    private RectTransform rectTransform;
-    private Canvas canvas;
-    private CanvasGroup canvasGroup;
-    private Vector2 originalPosition; // Store initial position
-    private BoardController boardController;
-    private RectTransform boardArea;
 
-    void Awake()
-    {
-        rectTransform = GetComponent<RectTransform>();
-        canvas = GetComponentInParent<Canvas>();
-        canvasGroup = GetComponent<CanvasGroup>();
+    public delegate void OnCardPressed();
+    public delegate void OnCardReleased();
+    public delegate void OnCardDragged(Vector2 deltaMovement);
 
-        if (canvasGroup == null)
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
-    }
-
-    void Start()
-    {
-        boardController = GameplayManager.GetBoardController();
-        boardArea = boardController.GetRectTransform();
-    }
+    public event OnCardPressed onCardPressed;
+    public event OnCardReleased onCardReleased;
+    public event OnCardDragged onCardDragged;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        originalPosition = rectTransform.anchoredPosition; // Save original position
-        canvasGroup.alpha = 0.7f;
-        canvasGroup.blocksRaycasts = false;
+        onCardPressed?.Invoke();       
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (canvas == null) return;
-        rectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
+        if (ModuleUI.GetCanvas() == null) return;
+        onCardDragged?.Invoke(eventData.delta / ModuleUI.GetCanvas().scaleFactor);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        canvasGroup.alpha = 1f;
-        canvasGroup.blocksRaycasts = true;
-
-        if (IsOverBoard())
-        {
-            Debug.Log("Card placed on board!");
-            SnapToBoard();
-        }
-        else
-        {
-            Debug.Log("Card returned to hand.");
-            rectTransform.anchoredPosition = originalPosition; // Return to hand
-        }
-    }
-
-    private bool IsOverBoard()
-    {
-        if (boardArea == null) return false;
-
-        return RectTransformUtility.RectangleContainsScreenPoint(boardArea, Input.mousePosition, canvas.worldCamera);
-    }
-
-    private void SnapToBoard()
-    {
-        rectTransform.SetParent(boardController.playableSockets[0].anchor, true); // Reparent to the board
-        rectTransform.anchoredPosition = Vector2.zero; // Snap to center (adjust if needed)
+        onCardReleased?.Invoke();
+        
     }
 
 }
