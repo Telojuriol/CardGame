@@ -42,6 +42,7 @@ public class HandController : MonoBehaviour
                 newCard.cardRectTransform.anchoredPosition = Vector2.zero;
                 newCard.cardRectTransform.localScale = Vector3.one;
                 newCard.combatantOwner = combatantOwner;
+                newCard.SetCanBeMovedByInput(combatantOwner.combatantType == CombatantController.ECombatantType.Player);
                 newCard.currentSocket = anchorSockets[i];
                 cardsInHand.Add(newCard);
             }

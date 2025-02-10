@@ -64,6 +64,7 @@ public class CardController : MonoBehaviour
 
     public void CardPlayed(GameplayManager.PlayableSocket socketToPlay)
     {
+        SetCanBeMovedByInput(false);
         cardRectTransform.parent = socketToPlay.anchor;
         socketToPlay.playedCard = this;
         cardRectTransform.anchoredPosition = Vector2.zero;      
@@ -101,6 +102,11 @@ public class CardController : MonoBehaviour
         if (boardRectTransform == null) return false;
 
         return RectTransformUtility.RectangleContainsScreenPoint(boardRectTransform, Input.mousePosition, ModuleUI.GetCanvas().worldCamera);
+    }
+
+    public void SetCanBeMovedByInput(bool status)
+    {
+        cardInputHandler.ActiveInput = status;
     }
 
 }

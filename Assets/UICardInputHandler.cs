@@ -8,6 +8,8 @@ using static UICardInputHandler;
 public class UICardInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
 
+    public bool ActiveInput = true;
+
     public delegate void OnCardPressed();
     public delegate void OnCardReleased();
     public delegate void OnCardDragged(Vector2 deltaMovement);
@@ -18,19 +20,20 @@ public class UICardInputHandler : MonoBehaviour, IPointerDownHandler, IDragHandl
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (!ActiveInput) return;
         onCardPressed?.Invoke();       
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (ModuleUI.GetCanvas() == null) return;
+        if (!ActiveInput || ModuleUI.GetCanvas() == null) return;
         onCardDragged?.Invoke(eventData.delta / ModuleUI.GetCanvas().scaleFactor);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (!ActiveInput) return;
         onCardReleased?.Invoke();
-        
     }
 
 }
