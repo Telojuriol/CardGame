@@ -64,7 +64,6 @@ public class CardController : MonoBehaviour
 
     public void CardPlayed(PlayableSocket socketToPlay)
     {
-        combatantOwner.ownHand.RemoveAnchorFromHand();
         SetCanBeMovedByInput(false);
         cardRectTransform.parent = socketToPlay.anchor;
         socketToPlay.playedCard = this;

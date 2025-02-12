@@ -31,5 +31,9 @@ public class RivalController : CombatantController
         }
     }
 
-    
+    public override void PlayCard(CardController cardToPlay)
+    {
+        base.PlayCard(cardToPlay);
+        ownHand.RemoveCardFromHand(cardToPlay);
+    }
 }

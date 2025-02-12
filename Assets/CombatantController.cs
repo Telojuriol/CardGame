@@ -31,7 +31,7 @@ public class CombatantController : MonoBehaviour
         //ownHand.DrawCards(this);
     }
 
-    public void PlayCard(CardController cardToPlay)
+    public virtual void PlayCard(CardController cardToPlay)
     {
         if(myBoardSocket.IsSocketFree()) cardToPlay.CardPlayed(myBoardSocket);
     }
