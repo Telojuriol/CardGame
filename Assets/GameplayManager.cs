@@ -40,6 +40,7 @@ public class GameplayManager : MonoBehaviour
 
     IEnumerator TurnLoop()
     {
+        bool GameFinished = false;
         while (true)
         {
             yield return new WaitUntil(() => AllCardsPlayed());
@@ -48,8 +49,10 @@ public class GameplayManager : MonoBehaviour
             yield return new WaitForSeconds(1f);
             DetermineRoundWinner();
             yield return new WaitForSeconds(2f);
+            if(NoCardsOnHands()) break;
             RemoveCardsFromBoard();
-        }    
+        }
+        Debug.Log("Jogo terminado!!!");
     }
 
     private bool AllCardsPlayed()
@@ -98,7 +101,7 @@ public class GameplayManager : MonoBehaviour
 
     private bool NoCardsOnHands()
     {
-        return false;
+        return rivalController.ownHand.currentNumberOfCardsOnHand == 0 && playerController.ownHand.currentNumberOfCardsOnHand == 0;
     }
 
     public static int GetInitialHandCards()
