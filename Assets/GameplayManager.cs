@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using static GameplayManager;
 
 public class GameplayManager : MonoBehaviour
 {
@@ -23,9 +25,11 @@ public class GameplayManager : MonoBehaviour
 
     public int initialHandCrads = 5;
 
+    public delegate void OnGameFinished(bool localPlayerWin);
     public delegate void OnStartedWaitingForCards();
 
     public static event OnStartedWaitingForCards waitingForCards;
+    public static event OnGameFinished onGameFinished;
 
     public static GameplayManager _instance;
 
@@ -66,6 +70,7 @@ public class GameplayManager : MonoBehaviour
             if(NoCardsOnHands()) break;
             RemoveCardsFromBoard();
         }
+        onGameFinished?.Invoke(true);
         Debug.Log("Jogo terminado!!!");
     }
 
@@ -146,6 +151,11 @@ public class GameplayManager : MonoBehaviour
     public static RivalController GetRivalController()
     {
         return _instance.rivalController;
+    }
+
+    public void OnGoToMenuButtonClicked()
+    {
+        SceneManager.LoadScene("MainMenuScene");
     }
 
 }

@@ -15,6 +15,8 @@ public class ModuleUI : MonoBehaviour
 
     public static ModuleUI _instance;
 
+    public GameObject GameFinishedMenu;
+
     private void Awake()
     {
         _instance = this;
@@ -23,6 +25,16 @@ public class ModuleUI : MonoBehaviour
     private void Start()
     {
         UpdateScores();
+    }
+
+    private void OnEnable()
+    {
+        GameplayManager.onGameFinished += OnGameFinished;
+    }
+
+    private void OnDisable()
+    {
+        GameplayManager.onGameFinished -= OnGameFinished;
     }
 
     public static Canvas GetCanvas()
@@ -37,5 +49,15 @@ public class ModuleUI : MonoBehaviour
 
         _instance.playerCombo.text = "Combo: " + GameplayManager.GetPlayerController().currentCombo.ToString();
         _instance.rivalCombo.text = "Combo: " + GameplayManager.GetRivalController().currentCombo.ToString();
+    }
+
+    public static void SetGameFinishedMenuStatus(bool status)
+    {
+        _instance.GameFinishedMenu.SetActive(status);
+    }
+
+    private void OnGameFinished(bool localPlayerWon)
+    {
+        SetGameFinishedMenuStatus(true);
     }
 }
