@@ -12,7 +12,6 @@ public class CardController : MonoBehaviour
 
     private bool Initialized = false;
 
-    public HandController handOwner;
     public PlayableSocket currentSocket;
     public bool isFaceDown = false;
 
@@ -67,7 +66,8 @@ public class CardController : MonoBehaviour
         SetCanBeMovedByInput(false);
         cardRectTransform.parent = socketToPlay.anchor;
         socketToPlay.playedCard = this;
-        cardRectTransform.anchoredPosition = Vector2.zero;      
+        cardRectTransform.anchoredPosition = Vector2.zero;
+        combatantOwner.ownHand.cardsInHand.Remove(this);
     }
 
     private void OnCardPressed()

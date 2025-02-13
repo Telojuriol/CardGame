@@ -15,7 +15,17 @@ public class GameplayManager : MonoBehaviour
         EndPhase
     }
 
+    public enum EEnemyType
+    {
+        AI,
+        Player
+    }
+
     public int initialHandCrads = 5;
+
+    public delegate void OnStartedWaitingForCards();
+
+    public static event OnStartedWaitingForCards waitingForCards;
 
     public static GameplayManager _instance;
 
@@ -27,6 +37,8 @@ public class GameplayManager : MonoBehaviour
 
     public PlayerController playerController;
     public RivalController rivalController;
+
+    public EEnemyType enemyType = EEnemyType.AI;
 
     private void Awake()
     {
@@ -43,6 +55,8 @@ public class GameplayManager : MonoBehaviour
         bool GameFinished = false;
         while (true)
         {
+            yield return new WaitForSeconds(0.5f);
+            waitingForCards?.Invoke();
             yield return new WaitUntil(() => AllCardsPlayed());
             currentGamePhase = EGamePhase.CombatPhase;
             Debug.Log("All cards played!");
