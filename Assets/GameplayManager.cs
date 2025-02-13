@@ -60,7 +60,7 @@ public class GameplayManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            //waitingForCards?.Invoke();
+            waitingForCards?.Invoke();
             yield return new WaitUntil(() => AllCardsPlayed());
             currentGamePhase = EGamePhase.CombatPhase;
             yield return new WaitForSeconds(0.25f);

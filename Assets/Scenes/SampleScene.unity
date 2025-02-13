@@ -797,7 +797,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e926a8d3f90281f47927c06e1bf10a5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialHandCrads: 1
+  initialHandCrads: 6
   handController: {fileID: 828451835}
   deckController: {fileID: 1876619221}
   boardController: {fileID: 301884506}

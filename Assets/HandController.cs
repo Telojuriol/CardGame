@@ -130,7 +130,7 @@ public class HandController : MonoBehaviour
             RectTransform new_trans = anchorSockets[i].anchor.GetComponent<RectTransform>();
 
             new_trans.anchoredPosition = new Vector3(startX + i * actualAnchorDistance, 0);
-            anchorSockets[i].playedCard.cardRectTransform.anchoredPosition = Vector2.zero;
+            //anchorSockets[i].playedCard.cardRectTransform.anchoredPosition = Vector2.zero;
         }
     }
 
