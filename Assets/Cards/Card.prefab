@@ -138,11 +138,14 @@ MonoBehaviour:
   currentSocket:
     anchor: {fileID: 0}
     playedCard: {fileID: 0}
+    anchorRectTransform: {fileID: 0}
   isFaceDown: 0
   combatantOwner: {fileID: 0}
   flipDuration: 1
+  scaleFactor: 1.1
   cardFront: {fileID: 8001366832072065718}
   cardBack: {fileID: 7274701830737033132}
+  lerpSpeed: 10
 --- !u!1 &2927803626918505971
 GameObject:
   m_ObjectHideFlags: 0

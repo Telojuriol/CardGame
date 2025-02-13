@@ -27,7 +27,9 @@ public class CardController : MonoBehaviour
     public GameObject cardFront;
     public GameObject cardBack;
     private bool flipingCard = false;
-
+    private bool isCardSelected = false;
+    private Vector2 desiredPosition;
+    public float lerpSpeed = 10f;
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -37,6 +39,22 @@ public class CardController : MonoBehaviour
     private void Start()
     {
         InitializeCard();
+    }
+
+    private void Update()
+    {
+        Debug.Log(combatantOwner.name + "  " + isCardSelected);
+        if (!isCardSelected && currentSocket != null)
+        {
+            Debug.Log(combatantOwner.name + "  paso 1");
+            if (currentSocket.anchorRectTransform != null)
+            {
+                desiredPosition = ModuleUI.GetCanvasRectTransform().InverseTransformPoint(currentSocket.anchorRectTransform.position);
+                Debug.Log(combatantOwner.name + "  paso 2");
+            }
+                         
+        }
+        cardRectTransform.anchoredPosition = Vector2.Lerp(cardRectTransform.anchoredPosition, desiredPosition, Time.deltaTime * lerpSpeed);
     }
 
     private void OnEnable()
@@ -86,20 +104,16 @@ public class CardController : MonoBehaviour
                        {
                            flipingCard = false;
                        });
-                    });
-        
-        // Second half: Rotate to 180° and scale back together
-        //flipSequence.Append(transform.DOScale(1f, flipDuration / 2).SetEase(Ease.OutQuad))
-                        //.Join(transform.DORotate(new Vector3(0, 180, 0), flipDuration / 2, RotateMode.Fast).SetEase(Ease.InOutQuad));
-        
+                    });        
     }
 
     public void CardPlayed(PlayableSocket socketToPlay)
     {
         SetCanBeMovedByInput(false);
-        cardRectTransform.parent = socketToPlay.anchor;
+        //cardRectTransform.parent = socketToPlay.anchor;
         socketToPlay.playedCard = this;
-        cardRectTransform.anchoredPosition = Vector2.zero;
+        currentSocket = socketToPlay;
+        //cardRectTransform.anchoredPosition = Vector2.zero;
         combatantOwner.ownHand.cardsInHand.Remove(this);
     }
 
@@ -107,15 +121,16 @@ public class CardController : MonoBehaviour
     {
         canvasGroup.alpha = 0.7f;
         canvasGroup.blocksRaycasts = false;
-        this.transform.parent = ModuleUI.GetCanvas().transform;
+        //this.transform.parent = ModuleUI.GetCanvas().transform;
         combatantOwner.ownHand.RemoveCardFromHand(this);
+        isCardSelected = true;
     }
 
     private void OnCardReleased()
     {
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
-
+        isCardSelected = false;
         if (IsOverBoard() && combatantOwner.CanPlayCard())
         {
             combatantOwner.PlayCard(this);
@@ -128,7 +143,7 @@ public class CardController : MonoBehaviour
 
     private void OnCardDragged(Vector2 deltaMovement)
     {
-        cardRectTransform.anchoredPosition += deltaMovement;
+        desiredPosition += deltaMovement;
     }
 
     private bool IsOverBoard()
@@ -142,6 +157,22 @@ public class CardController : MonoBehaviour
     public void SetCanBeMovedByInput(bool status)
     {
         cardInputHandler.ActiveInput = status;
+    }
+
+    public void SetCardFaceDownStatus(bool status)
+    {
+        isFaceDown = status;
+        if (status)
+        {
+            
+            cardFront.SetActive(false);
+            cardBack.SetActive(true);       
+        }
+        else
+        {
+            cardFront.SetActive(true);
+            cardBack.SetActive(false);
+        }
     }
 
 }

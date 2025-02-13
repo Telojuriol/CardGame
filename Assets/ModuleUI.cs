@@ -12,6 +12,7 @@ public class ModuleUI : MonoBehaviour
     public TextMeshProUGUI rivalCombo;
 
     public Canvas UICanvas;
+    public RectTransform UICanvasRectTransform;
 
     public static ModuleUI _instance;
 
@@ -40,6 +41,11 @@ public class ModuleUI : MonoBehaviour
     public static Canvas GetCanvas()
     {
         return _instance.UICanvas;
+    }
+
+    public static RectTransform GetCanvasRectTransform()
+    {
+        return _instance.UICanvasRectTransform;
     }
 
     public static void UpdateScores()

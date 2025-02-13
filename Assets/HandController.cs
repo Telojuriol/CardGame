@@ -38,6 +38,7 @@ public class HandController : MonoBehaviour
             AddCardToHand(newCard);       
             newCard.combatantOwner = combatantOwner;
             newCard.SetCanBeMovedByInput(combatantOwner.combatantType == CombatantController.ECombatantType.Player);
+            newCard.SetCardFaceDownStatus(combatantOwner.combatantType == CombatantController.ECombatantType.Rival);
             cardsInHand.Add(newCard);
         }
     }
@@ -76,11 +77,10 @@ public class HandController : MonoBehaviour
     {
         currentNumberOfCardsOnHand++;
         GameObject new_anchor = Instantiate(anchorPrefab, transform);
-        PlayableSocket newSocket = new PlayableSocket(new_anchor.transform);
+        RectTransform new_rectTransform = new_anchor.GetComponent<RectTransform>();
+        PlayableSocket newSocket = new PlayableSocket(new_anchor.transform, new_rectTransform);
         anchorSockets.Add(newSocket);
         
-        cardToAdd.transform.parent = newSocket.anchor;
-        cardToAdd.cardRectTransform.anchoredPosition = Vector2.zero;
         cardToAdd.cardRectTransform.localScale = Vector3.one;
         cardToAdd.currentSocket = newSocket;
         newSocket.playedCard = cardToAdd;

@@ -60,23 +60,42 @@ public class GameplayManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(0.5f);
-            waitingForCards?.Invoke();
+            //waitingForCards?.Invoke();
             yield return new WaitUntil(() => AllCardsPlayed());
             currentGamePhase = EGamePhase.CombatPhase;
-            Debug.Log("All cards played!");
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.25f);
+            TurnUpCards();
+            yield return new WaitUntil(() => AllCardsLookingUp());
+            yield return new WaitForSeconds(0.5f);
             DetermineRoundWinner();
             yield return new WaitForSeconds(2f);
             if(NoCardsOnHands()) break;
             RemoveCardsFromBoard();
         }
         onGameFinished?.Invoke(true);
-        Debug.Log("Jogo terminado!!!");
     }
 
     private bool AllCardsPlayed()
     {
         return boardController.AllCardsPlayed();
+    }
+
+    private void TurnUpCards()
+    {
+        for(int i = 0; i < boardController.playableSockets.Count; i++)
+        {
+            if(boardController.playableSockets[i].playedCard.isFaceDown) boardController.playableSockets[i].playedCard.TurnCard();
+        }       
+    }
+
+    private bool AllCardsLookingUp()
+    {
+        bool allFacingUp = true;
+        for (int i = 0; i < boardController.playableSockets.Count; i++)
+        {
+            allFacingUp = allFacingUp || !boardController.playableSockets[i].playedCard.isFaceDown;
+        }
+        return allFacingUp;
     }
 
     private void DetermineRoundWinner()
@@ -165,10 +184,12 @@ public class PlayableSocket
 {
     public Transform anchor;
     public CardController playedCard;
+    public RectTransform anchorRectTransform;
 
-    public PlayableSocket(Transform anchor)
+    public PlayableSocket(Transform anchor, RectTransform anchorRectTransform)
     {
         this.anchor = anchor;
+        this.anchorRectTransform = anchorRectTransform;
     }
 
     public bool IsSocketFree()
