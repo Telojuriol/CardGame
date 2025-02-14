@@ -23,9 +23,16 @@ public class GameplayManager : MonoBehaviour
         Player
     }
 
+    public enum EGameResult
+    {
+        Victory,
+        Defeat,
+        Draw
+    }
+
     public int initialHandCrads = 5;
 
-    public delegate void OnGameFinished(bool localPlayerWin);
+    public delegate void OnGameFinished(EGameResult gameResult);
     public delegate void OnStartedWaitingForCards();
 
     public static event OnStartedWaitingForCards waitingForCards;
@@ -72,7 +79,20 @@ public class GameplayManager : MonoBehaviour
             if(NoCardsOnHands()) break;
             RemoveCardsFromBoard();
         }
-        onGameFinished?.Invoke(true);
+        EGameResult gameResult = EGameResult.Victory;
+        if (rivalController.currentScore > playerController.currentScore)
+        {
+            gameResult = EGameResult.Victory;
+        }
+        else if (rivalController.currentScore < playerController.currentScore)
+        {
+            gameResult = EGameResult.Defeat;
+        }
+        else
+        {
+            gameResult = EGameResult.Draw;
+        }
+        onGameFinished?.Invoke(gameResult);
     }
 
     private bool AllCardsPlayed()
@@ -175,6 +195,11 @@ public class GameplayManager : MonoBehaviour
     public void OnGoToMenuButtonClicked()
     {
         SceneManager.LoadScene("MainMenuScene");
+    }
+
+    public void OnPlayAgainButtonClicked()
+    {
+        SceneManager.LoadScene("SampleScene");
     }
 
 }

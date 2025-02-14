@@ -19,6 +19,11 @@ public class ModuleUI : MonoBehaviour
     public GameObject GameFinishedMenu;
     public GameObject CardsFolder;
 
+    public TextMeshProUGUI victoryText;
+    public string TextForWin = "Victory!";
+    public string TextForLose = "Defeat...";
+    public string TextForDraw = "Draw";
+
     private void Awake()
     {
         _instance = this;
@@ -63,8 +68,25 @@ public class ModuleUI : MonoBehaviour
         _instance.GameFinishedMenu.SetActive(status);
     }
 
-    private void OnGameFinished(bool localPlayerWon)
+    private void OnGameFinished(GameplayManager.EGameResult gameResult)
     {
         SetGameFinishedMenuStatus(true);
+        SetGameResultText(gameResult);
+    }
+
+    private void SetGameResultText(GameplayManager.EGameResult gameResult)
+    {
+        switch (gameResult)
+        {
+            case GameplayManager.EGameResult.Victory:
+                victoryText.text = TextForWin;
+                break;
+            case GameplayManager.EGameResult.Defeat:
+                victoryText.text = TextForLose;
+                break;
+            case GameplayManager.EGameResult.Draw:
+                victoryText.text = TextForDraw;
+                break;
+        }
     }
 }

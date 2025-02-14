@@ -147,6 +147,7 @@ public class CardController : MonoBehaviour
         socketToPlay.playedCard = this;
         currentSocket = socketToPlay;
         //cardRectTransform.anchoredPosition = Vector2.zero;
+        if(!isFaceDown) SetCardFaceDownStatus(true);
         combatantOwner.ownHand.cardsInHand.Remove(this);
     }
 
