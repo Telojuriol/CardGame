@@ -30,6 +30,13 @@ public class CardController : MonoBehaviour
     private bool isCardSelected = false;
     private Vector2 desiredPosition;
     public float lerpSpeed = 10f;
+
+    public float lerpSpeedWhenCardPressed = 9999999f;
+
+    private float currentLerpSpeed = 10f;
+
+    public bool cardPlayed = false;
+
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -39,22 +46,25 @@ public class CardController : MonoBehaviour
     private void Start()
     {
         InitializeCard();
+        currentLerpSpeed = lerpSpeed;
     }
+    private Vector2 previousPosition = Vector2.zero;
+    private Vector2 movementDelta = Vector2.zero;
 
     private void Update()
     {
-        Debug.Log(combatantOwner.name + "  " + isCardSelected);
+        if(!flipingCard) FollowRotation();
+
         if (!isCardSelected && currentSocket != null)
         {
-            Debug.Log(combatantOwner.name + "  paso 1");
             if (currentSocket.anchorRectTransform != null)
             {
                 desiredPosition = ModuleUI.GetCanvasRectTransform().InverseTransformPoint(currentSocket.anchorRectTransform.position);
-                Debug.Log(combatantOwner.name + "  paso 2");
-            }
-                         
+            }                     
         }
         cardRectTransform.anchoredPosition = Vector2.Lerp(cardRectTransform.anchoredPosition, desiredPosition, Time.deltaTime * lerpSpeed);
+        movementDelta = cardRectTransform.anchoredPosition - previousPosition;
+        previousPosition = cardRectTransform.anchoredPosition;
     }
 
     private void OnEnable()
@@ -88,27 +98,50 @@ public class CardController : MonoBehaviour
         Sequence flipSequence = DOTween.Sequence();
         flipingCard = true;
         float targetRotation = isFaceDown ? 0 : 180;
-        // First half: Rotate to 90° and scale up together
-        flipSequence.Append(transform.DOScale(scaleFactor, flipDuration / 2).SetEase(Ease.OutQuad))
-                    .Join(transform.DORotate(new Vector3(0, 90, 0), flipDuration / 2, RotateMode.Fast).SetEase(Ease.InOutQuad))
+        bool facingUp = isFaceDown;
+        bool alreadyFlipped = false;
+
+        flipSequence.Append(cardRectTransform.DOScale(scaleFactor, flipDuration / 2).SetEase(Ease.OutQuad))
+                    .Join(cardRectTransform.DORotate(new Vector3(0, 90, 0), flipDuration / 2, RotateMode.Fast).SetEase(Ease.InOutQuad))
+                    .Append(cardRectTransform.DOScale(1f, flipDuration / 2).SetEase(Ease.OutQuad))
+                    .Join(cardRectTransform.DORotate(new Vector3(0, targetRotation, 0), flipDuration / 2, RotateMode.Fast).SetEase(Ease.InOutQuad))
+                    .OnUpdate(() =>
+                    {
+                        if (!alreadyFlipped)
+                        {
+                            bool flipCard = Mathf.Abs(90 - cardRectTransform.rotation.eulerAngles.y) < 3f;
+                            if (flipCard)
+                            {
+                                isFaceDown = !isFaceDown;
+                                cardFront.SetActive(!isFaceDown);
+                                cardBack.SetActive(isFaceDown);
+                                alreadyFlipped = true;
+                            }
+                        }
+                    })
                     .OnStepComplete(() =>
                     {
-                        Debug.Log("Flipeandoo");
-                        // Swap front and back visuals
-                        isFaceDown = !isFaceDown;
-                        cardFront.SetActive(!isFaceDown);
-                        cardBack.SetActive(isFaceDown);
-                        flipSequence.Append(transform.DOScale(1f, flipDuration / 2).SetEase(Ease.OutQuad))
-                       .Join(transform.DORotate(new Vector3(0, targetRotation, 0), flipDuration / 2, RotateMode.Fast).SetEase(Ease.InOutQuad))
-                       .OnComplete(() =>
-                       {
-                           flipingCard = false;
-                       });
-                    });        
+                        flipingCard = false;
+                    });
+    }
+
+    [SerializeField] private float rotationAmount = 20;
+    [SerializeField] private float rotationSpeed = 20;
+    [SerializeField] private float autoTiltAmount = 30;
+    [SerializeField] private float manualTiltAmount = 20;
+    [SerializeField] private float tiltSpeed = 20;
+    private Vector3 rotationDelta;
+
+    private void FollowRotation()
+    {
+        Vector3 movementRotation = movementDelta * rotationAmount;
+        rotationDelta = Vector3.Lerp(rotationDelta, movementRotation, rotationSpeed * Time.deltaTime);
+        cardRectTransform.eulerAngles = new Vector3(0, 0, Mathf.Clamp(rotationDelta.x, -60, 60));
     }
 
     public void CardPlayed(PlayableSocket socketToPlay)
     {
+        cardPlayed = true;
         SetCanBeMovedByInput(false);
         //cardRectTransform.parent = socketToPlay.anchor;
         socketToPlay.playedCard = this;
@@ -124,6 +157,7 @@ public class CardController : MonoBehaviour
         //this.transform.parent = ModuleUI.GetCanvas().transform;
         combatantOwner.ownHand.RemoveCardFromHand(this);
         isCardSelected = true;
+        currentLerpSpeed = lerpSpeedWhenCardPressed;
     }
 
     private void OnCardReleased()
@@ -131,6 +165,7 @@ public class CardController : MonoBehaviour
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
         isCardSelected = false;
+        currentLerpSpeed = lerpSpeed;
         if (IsOverBoard() && combatantOwner.CanPlayCard())
         {
             combatantOwner.PlayCard(this);

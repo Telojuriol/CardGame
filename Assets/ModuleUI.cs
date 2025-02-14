@@ -17,6 +17,7 @@ public class ModuleUI : MonoBehaviour
     public static ModuleUI _instance;
 
     public GameObject GameFinishedMenu;
+    public GameObject CardsFolder;
 
     private void Awake()
     {

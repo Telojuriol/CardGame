@@ -23,7 +23,7 @@ public class DeckController : MonoBehaviour
         GameObject drawnCard = deckCards.Count > 0 ? deckCards[0] : null;
         if (drawnCard)
         {
-            GameObject newCard = Instantiate(deckCards[0].gameObject, ModuleUI.GetCanvas().transform);
+            GameObject newCard = Instantiate(deckCards[0].gameObject, ModuleUI._instance.CardsFolder.transform);
             CardController newCardController = newCard.GetComponent<CardController>();
             deckCards.RemoveAt(0);
             return newCardController;

@@ -1410,8 +1410,8 @@ RectTransform:
   - {fileID: 301884503}
   - {fileID: 1494763631}
   - {fileID: 502062291}
-  - {fileID: 1081849263}
   - {fileID: 481859326}
+  - {fileID: 1081849263}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1438,6 +1438,7 @@ MonoBehaviour:
   UICanvas: {fileID: 1591076182}
   UICanvasRectTransform: {fileID: 1591076183}
   GameFinishedMenu: {fileID: 1081849262}
+  CardsFolder: {fileID: 481859325}
 --- !u!1 &1655440068
 GameObject:
   m_ObjectHideFlags: 0
