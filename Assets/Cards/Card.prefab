@@ -37,10 +37,10 @@ RectTransform:
   - {fileID: 942166010250941793}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 215, y: 283}
+  m_AnchorMin: {x: 0.19900002, y: 0.2711721}
+  m_AnchorMax: {x: 0.804, y: 0.7261721}
+  m_AnchoredPosition: {x: -0.5, y: 1}
+  m_SizeDelta: {x: 0, y: -3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2196038724291922381
 CanvasRenderer:
@@ -146,6 +146,13 @@ MonoBehaviour:
   cardFront: {fileID: 8001366832072065718}
   cardBack: {fileID: 7274701830737033132}
   lerpSpeed: 10
+  lerpSpeedWhenCardPressed: 9999999
+  cardPlayed: 0
+  rotationAmount: 20
+  rotationSpeed: 20
+  autoTiltAmount: 30
+  manualTiltAmount: 20
+  tiltSpeed: 20
 --- !u!1 &2927803626918505971
 GameObject:
   m_ObjectHideFlags: 0
